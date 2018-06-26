@@ -2,9 +2,12 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+
+const env = process.env.NODE_ENV || 'development';
 
 module.exports = {
-    mode: 'development',
+    mode: env,
     devtool: 'source-map',
     entry: {
         extension: './src/extension',
@@ -27,6 +30,15 @@ module.exports = {
     },
     optimization: {
         splitChunks: {},
+        minimizer: env === 'production' ? [
+            new UglifyJsPlugin({
+                uglifyOptions: {
+                    compress: {
+                        drop_console: true,
+                    },
+                },
+            }),
+        ] : undefined,
     },
     plugins: [
         new webpack.optimize.ModuleConcatenationPlugin(),
