@@ -1,14 +1,17 @@
+const fs = require('fs');
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const ZipPlugin = require('zip-webpack-plugin');
 
-const env = process.env.NODE_ENV || 'development';
+const node_env = process.env.NODE_ENV || 'development';
+const package = require('./package.json');
 
-module.exports = {
-    mode: env,
-    devtool: 'source-map',
+module.exports = env => ({
+    mode: node_env,
+    devtool: node_env === 'production' ? false : 'source-map',
     entry: {
         extension: './src/extension',
         'options-ui': './src/options-ui',
@@ -30,19 +33,25 @@ module.exports = {
     },
     optimization: {
         splitChunks: {},
-        minimizer: env === 'production' ? [
-            new UglifyJsPlugin({
-                uglifyOptions: {
-                    compress: {
-                        drop_console: true,
-                    },
-                },
-            }),
-        ] : undefined,
+        minimizer:
+            node_env === 'production'
+                ? [
+                      new UglifyJsPlugin({
+                          uglifyOptions: {
+                              compress: {
+                                  drop_console: true,
+                              },
+                          },
+                      }),
+                  ]
+                : undefined,
     },
     plugins: [
         new webpack.optimize.ModuleConcatenationPlugin(),
-        new CopyWebpackPlugin(['src/manifest.json']),
+        new CopyWebpackPlugin([
+            'src/manifest.json',
+            { from: 'src/*.png', flatten: true },
+        ]),
         new HtmlWebpackPlugin({
             title: 'Thumbtack Options',
             minify: false,
@@ -50,5 +59,14 @@ module.exports = {
             chunks: ['options-ui'],
             template: path.resolve(__dirname, 'src', 'options-ui.html'),
         }),
-    ],
-};
+    ].concat(
+        env === 'pack'
+            ? [
+                  new ZipPlugin({
+                      path: __dirname,
+                      filename: 'thumb-tack-' + package.version + '.zip',
+                  }),
+              ]
+            : [],
+    ),
+});

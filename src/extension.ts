@@ -1,6 +1,28 @@
-import { shouldPin, getOptions } from './common';
+import { IOptions, shouldPin, getOptions } from './common';
 
-// const seen = new Set<number>();
+const pinnedTabIds = new Set<number>();
+const unpinnedTabIds = new Set<number>();
+
+const pinTab = (tabId: number) => {
+    chrome.tabs.update(tabId, { pinned: true });
+    markTabAsPinned(tabId);
+};
+
+const markTabAsPinned = (tabId: number) => {
+    pinnedTabIds.add(tabId);
+    unpinnedTabIds.delete(tabId);
+};
+
+const markTabAsUnpinned = (tabId: number) => {
+    pinnedTabIds.delete(tabId);
+    unpinnedTabIds.add(tabId);
+};
+
+const getMatchingPinRule = (options: IOptions, url: string) => {
+    const uri = new URL(url);
+    return options.rules.find(r => shouldPin(r, uri));
+};
+
 (async () => {
     let options = await getOptions();
 
@@ -10,39 +32,64 @@ import { shouldPin, getOptions } from './common';
     }
 
     chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+        if (changeInfo.pinned === false) {
+            markTabAsUnpinned(tabId);
+            return;
+        }
+
         if (
             changeInfo.status &&
-            changeInfo.status == options.updateEvent &&
+            changeInfo.status === options.updateEvent &&
             tab.url
         ) {
-            // if (seen.has(tabId)) {
-            //     console.log(`tab #${tabId} has been seen already, skipping...`);
-            //     return;
-            // }
+            // Tab was already pinned
             if (tab.pinned) {
                 console.log(`tab #${tabId} is pinned, skipping...`);
+                markTabAsPinned(tabId);
                 return;
             }
+
+            // Something changed about this tab, but it's been manually
+            // unpinned previously
+            if (unpinnedTabIds.has(tabId)) {
+                console.log(`tab #${tabId} was manually unpinned, skipping...`);
+                return;
+            }
+
+            // If we get here, we care about this tab, check to see if
+            // it should be pinned
             console.log(`tab #${tabId}: ${changeInfo.status}`);
-            if (
-                options.rules.some(rule => {
-                    const result = shouldPin(rule, new URL(tab.url));
-                    if (result) {
-                        console.log(
-                            `tab #${tabId} matches rule: ${rule.value}`,
-                        );
-                    }
-                    return result;
-                })
-            ) {
-                // Pin it!
+            const matchingRule = getMatchingPinRule(options, tab.url);
+            if (!!matchingRule) {
+                console.log(`tab #${tabId} matched rule: ${matchingRule.value}`);
                 chrome.tabs.update(tabId, { pinned: true });
+                unpinnedTabIds.delete(tabId);
+                pinnedTabIds.add(tabId);
             }
         }
     });
 
     chrome.tabs.onRemoved.addListener((tabId, removeInfo) => {
-        console.log(`Removing tab #${tabId} from seen list`);
-        // seen.delete(tabId);
+        console.log(`tab #${tabId} removed`);
+        pinnedTabIds.delete(tabId);
+        unpinnedTabIds.delete(tabId);
+    });
+
+    // Pin All action for when the user clicks on the extension icon
+    chrome.browserAction.onClicked.addListener(() => {
+        // Query all unpinned tabs, and force pin any that match
+        chrome.tabs.query({pinned: false}, tabs => {
+            tabs.forEach(tab => {
+                if (!tab.url || tab.pinned)
+                    return;
+
+                const matchingRule = getMatchingPinRule(options, tab.url);
+                if (matchingRule) {
+                    // Force pin it
+                    console.log(`tab #${tab.id} matched rule ${matchingRule.value}`);
+                    pinTab(tab.id);
+                }
+            });
+        });
     });
 })();

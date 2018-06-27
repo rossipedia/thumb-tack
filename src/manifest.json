@@ -1,13 +1,33 @@
 {
     "name": "ThumbTack",
-    "version": "1.0",
-    "version_name": "1.0 preview",
+    "version": "0.0.1",
+    "version_name": "0.0.1-pre",
     "manifest_version": 2,
     "description": "Put a pin in your tabs",
+    "icons": {
+        "16": "icon-16.png",
+        "32": "icon-32.png",
+        "48": "icon-48.png",
+        "64": "icon-64.png",
+        "128": "icon-128.png"
+    },
+    "browser_action": {
+        "default_icon": {
+            "16": "icon-16.png",
+            "32": "icon-32.png",
+            "48": "icon-48.png"
+        },
+        "default_title": "ThumbTack - Click to Pin All"
+    },
     "options_page": "options.html",
     "background": {
-        "scripts": ["extension.js"],
+        "scripts": [
+            "extension.js"
+        ],
         "persistent": false
     },
-    "permissions": ["tabs", "storage"]
+    "permissions": [
+        "tabs",
+        "storage"
+    ]
 }
