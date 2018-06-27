@@ -1,7 +1,8 @@
 {
     "name": "@rossipedia/thumb-tack",
     "description": "Chrome Extension for Automatically Pinning Tabs",
-    "version": "0.0.1-pre",
+    "version": "0.0.1",
+    "license": "MIT",
     "scripts": {
         "dev": "nodemon -w src/manifest.json -w webpack.config.js -x \"webpack --mode development --watch\"",
         "zip": "rimraf dist && cross-env NODE_ENV=production webpack --mode production --env pack",

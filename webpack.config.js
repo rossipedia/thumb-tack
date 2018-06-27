@@ -50,7 +50,7 @@ module.exports = env => ({
         new webpack.optimize.ModuleConcatenationPlugin(),
         new CopyWebpackPlugin([
             'src/manifest.json',
-            { from: 'src/*.png', flatten: true },
+            { from: 'src/*.{png,svg}', flatten: true },
         ]),
         new HtmlWebpackPlugin({
             title: 'Thumbtack Options',

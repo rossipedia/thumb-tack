@@ -1,9 +1,10 @@
 {
     "name": "ThumbTack",
     "version": "0.0.1",
-    "version_name": "0.0.1-pre",
+    "version_name": "0.0.1",
     "manifest_version": 2,
-    "description": "Put a pin in your tabs",
+    "description":
+        "Automatically pins tabs based on URL, domain, or regular expression",
     "icons": {
         "16": "icon-16.png",
         "32": "icon-32.png",
@@ -17,17 +18,15 @@
             "32": "icon-32.png",
             "48": "icon-48.png"
         },
-        "default_title": "ThumbTack - Click to Pin All"
+        "default_title": "ThumbTack"
     },
-    "options_page": "options.html",
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": true
+    },
     "background": {
-        "scripts": [
-            "extension.js"
-        ],
+        "scripts": ["extension.js"],
         "persistent": false
     },
-    "permissions": [
-        "tabs",
-        "storage"
-    ]
+    "permissions": ["tabs", "storage"]
 }

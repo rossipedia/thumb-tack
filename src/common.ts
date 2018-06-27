@@ -36,8 +36,7 @@ const normalizeExpression = (expr:string|RegExp) =>
 
 const defaultOptions: IOptions = {
     updateEvent: 'loading',
-    rules: [
-    ],
+    rules: [],
 };
 
 // Default to sync storage for now
