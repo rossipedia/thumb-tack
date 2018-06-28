@@ -31,8 +31,6 @@ export function shouldPin(def: PinDefinition, url: URL): boolean {
     }
 }
 
-const normalizeExpression = (expr:string|RegExp) =>
-    String(expr).replace(/^\/|\/$/g, '');
 
 const defaultOptions: IOptions = {
     updateEvent: 'loading',
