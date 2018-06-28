@@ -20,7 +20,9 @@ const markTabAsUnpinned = (tabId: number) => {
 
 const getMatchingPinRule = (options: IOptions, url: string) => {
     const uri = new URL(url);
-    return options.rules.find(r => shouldPin(r, uri));
+    return options.rules
+        .filter(r => typeof r.value === 'string' && r.value.trim() !== '')
+        .find(r => shouldPin(r, uri));
 };
 
 (async () => {
