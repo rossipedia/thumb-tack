@@ -4,12 +4,10 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const ZipPlugin = require('zip-webpack-plugin');
 
 const node_env = process.env.NODE_ENV || 'development';
-const package = require('./package.json');
 
-module.exports = env => ({
+module.exports = ({
     mode: node_env,
     devtool: node_env === 'production' ? false : 'source-map',
     entry: {
@@ -59,14 +57,5 @@ module.exports = env => ({
             chunks: ['options-ui'],
             template: path.resolve(__dirname, 'src', 'options-ui.html'),
         }),
-    ].concat(
-        env === 'pack'
-            ? [
-                  new ZipPlugin({
-                      path: __dirname,
-                      filename: 'thumb-tack-' + package.version + '.zip',
-                  }),
-              ]
-            : [],
-    ),
+    ],
 });
