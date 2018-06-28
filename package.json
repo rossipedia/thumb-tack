@@ -6,6 +6,7 @@
     "scripts": {
         "dev": "nodemon -w src/manifest.json -w webpack.config.js -x \"webpack --mode development --watch\"",
         "build": "rimraf dist && cross-env NODE_ENV=production webpack --mode production",
+        "clean": "git clean -xdf -e /.env",
         "upload": "node dotenv.js webstore upload --source dist",
         "version": "node patch-manifest.js"
     },
