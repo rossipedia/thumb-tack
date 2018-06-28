@@ -8,7 +8,7 @@ A Google Chrome extension that automatically pins tabs based on the URL
 
 ## Usage
 
-Install the extension from [here][2] (TODO).
+Install the extension from [here][2].
 
 ### Options
 
