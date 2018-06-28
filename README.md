@@ -28,4 +28,4 @@ even if that tab has previously been unpinned.
 
 
 [1]: https://chrome.google.com/webstore/detail/url-pinner/lchefjdnocignejmkklgakfmnjhiimjh?utm_source=chrome-ntp-icon
-[2]: #
+[2]: https://chrome.google.com/webstore/detail/plkdbophokgibnhgphiamdpgamdcpcfc
