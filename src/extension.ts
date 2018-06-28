@@ -26,12 +26,20 @@ const getMatchingPinRule = (options: IOptions, url: string) => {
 (async () => {
     let options = await getOptions();
 
-    if (options.rules.length == 0) {
-        console.log(`no rules defined, aborting...`);
-        return;
-    }
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+        if (areaName === 'sync' && changes.options) {
+            console.log('Got new options!');
+            console.log(changes.options.newValue);
+            options = changes.options.newValue;
+        }
+    });
 
     chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+        if (options.rules.length == 0) {
+            console.log(`no rules defined, aborting...`);
+            return;
+        }
+
         if (changeInfo.pinned === false) {
             markTabAsUnpinned(tabId);
             return;
@@ -61,7 +69,9 @@ const getMatchingPinRule = (options: IOptions, url: string) => {
             console.log(`tab #${tabId}: ${changeInfo.status}`);
             const matchingRule = getMatchingPinRule(options, tab.url);
             if (!!matchingRule) {
-                console.log(`tab #${tabId} matched rule: ${matchingRule.value}`);
+                console.log(
+                    `tab #${tabId} matched rule: ${matchingRule.value}`,
+                );
                 chrome.tabs.update(tabId, { pinned: true });
                 unpinnedTabIds.delete(tabId);
                 pinnedTabIds.add(tabId);
@@ -78,15 +88,16 @@ const getMatchingPinRule = (options: IOptions, url: string) => {
     // Pin All action for when the user clicks on the extension icon
     chrome.browserAction.onClicked.addListener(() => {
         // Query all unpinned tabs, and force pin any that match
-        chrome.tabs.query({pinned: false}, tabs => {
+        chrome.tabs.query({ pinned: false }, tabs => {
             tabs.forEach(tab => {
-                if (!tab.url || tab.pinned)
-                    return;
+                if (!tab.url || tab.pinned) return;
 
                 const matchingRule = getMatchingPinRule(options, tab.url);
                 if (matchingRule) {
                     // Force pin it
-                    console.log(`tab #${tab.id} matched rule ${matchingRule.value}`);
+                    console.log(
+                        `tab #${tab.id} matched rule ${matchingRule.value}`,
+                    );
                     pinTab(tab.id);
                 }
             });
