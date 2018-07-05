@@ -8,12 +8,6 @@ import produce from 'immer';
 
 const manifest = chrome.runtime.getManifest();
 
-injectGlobal`
-    body {
-        /* font-size: 14px; */
-        font-family: Arial;
-    }
-`;
 
 const Container = styled.div`
     box-sizing: border-box;
@@ -43,7 +37,6 @@ const IconImage = ({ size }: { size: '16' | '32' | '48' | '64' | '128' }) => (
 const Version = styled.span`
     color: #666;
     font-family: monospace;
-    /* font-size: 80%; */
     margin-left: 10px;
 `;
 
@@ -90,12 +83,19 @@ const ValueInputField = styled.input`
 const ValueInput = ({
     value,
     onChange,
-    placeholder
+    placeholder,
 }: {
     value: string;
     onChange: React.FormEventHandler<HTMLInputElement>;
     placeholder?: string;
-}) => <ValueInputField type="text" value={value} onChange={onChange} placeholder={placeholder} />;
+}) => (
+    <ValueInputField
+        type="text"
+        value={value}
+        onChange={onChange}
+        placeholder={placeholder}
+    />
+);
 
 const AddIcon = () => (
     <svg
@@ -131,12 +131,14 @@ const AddButton = styled.button`
     }
 `;
 
+const ExtraOptions = styled.div`
+    padding-bottom: 1em;
+    margin-bottom: 1em;
+    border-bottom: 1px solid #ccc;
+`;
+
 const SyncWrap = styled.div`
-    grid-column-start: 2;
-    grid-column-end: 4;
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
+    margin-left: auto;
 `;
 
 const SyncMessage = styled.span`
@@ -385,9 +387,6 @@ class App extends React.Component<OptionsEditorProps, OptionsEditorState> {
             }),
         );
     };
-    /*
-
-    */
 
     render() {
         const { options, syncState, error } = this.state;
@@ -410,12 +409,12 @@ class App extends React.Component<OptionsEditorProps, OptionsEditorState> {
                 </Header>
                 {error == null ? (
                     <>
+                        <h2>Rules:</h2>
                         <p>
                             Enter your rules below. Changes will automatically
                             be synced across devices.
                         </p>
-                        <p>
-                            </p>
+                        <p />
                         <RulesList>
                             {options.rules.map((rule, i) => (
                                 <RuleRow key={i}>
@@ -449,12 +448,11 @@ class App extends React.Component<OptionsEditorProps, OptionsEditorState> {
                                                 e.currentTarget.value,
                                             )
                                         }
-
                                         placeholder={
                                             rule.type === PinType.DomainMatch ||
-                                            rule.type === PinType.UrlMatch ?
-                                            'Enter a regular expression'
-                                            : ''
+                                            rule.type === PinType.UrlMatch
+                                                ? 'Enter a regular expression'
+                                                : ''
                                         }
                                     />
                                     <DeleteButton
@@ -469,11 +467,6 @@ class App extends React.Component<OptionsEditorProps, OptionsEditorState> {
                                         <span>Add Rule</span>
                                     </AddButton>
                                 </div>
-                                <SyncWrap>
-                                    <SyncMessage className={syncState}>
-                                        Settings synced
-                                    </SyncMessage>
-                                </SyncWrap>
                             </RuleRow>
                         </RulesList>
                     </>
@@ -528,6 +521,11 @@ class App extends React.Component<OptionsEditorProps, OptionsEditorState> {
                     >
                         <TwitterLogo />
                     </a>
+                    <SyncWrap>
+                        <SyncMessage className={syncState}>
+                            Settings synced
+                        </SyncMessage>
+                    </SyncWrap>
                 </ExtensionInfo>
             </Container>
         );

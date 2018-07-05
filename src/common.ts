@@ -10,12 +10,17 @@ export interface PinDefinition {
     value: string;
 }
 
+
 export interface IOptions {
-    updateEvent: 'loading' | 'complete';
     rules: PinDefinition[];
 }
 
 export function shouldPin(def: PinDefinition, url: URL): boolean {
+    console.log(
+        `Matching ${url.toString()} against rule ${def.value} with type ${
+            PinType[def.type]
+        }`,
+    );
     switch (def.type) {
         case PinType.UrlExact:
             return url.toString() === def.value;
@@ -31,9 +36,7 @@ export function shouldPin(def: PinDefinition, url: URL): boolean {
     }
 }
 
-
 const defaultOptions: IOptions = {
-    updateEvent: 'loading',
     rules: [],
 };
 
@@ -44,7 +47,7 @@ export function getOptions(): Promise<IOptions> {
             ['options'],
             (result: { options: IOptions }) => {
                 if (result && result.options) {
-                    console.log(`Got options:`, result.options)
+                    console.log(`Got options:`, result.options);
                     resolve(result.options);
                 } else {
                     resolve(defaultOptions);
