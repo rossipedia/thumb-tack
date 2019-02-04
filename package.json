@@ -3,6 +3,9 @@
     "description": "Chrome Extension for Automatically Pinning Tabs",
     "version": "0.0.5",
     "license": "MIT",
+    "engines": {
+        "node": ">=10"
+    },
     "scripts": {
         "dev": "nodemon -w src/manifest.json -w webpack.config.js -x \"webpack --mode development --watch\"",
         "build": "rimraf dist && cross-env NODE_ENV=production webpack --mode production",
