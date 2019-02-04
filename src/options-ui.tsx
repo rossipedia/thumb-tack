@@ -10,6 +10,7 @@ const manifest = chrome.runtime.getManifest();
 
 
 const Container = styled.div`
+    font-family: sans-serif;
     box-sizing: border-box;
     width: 800px;
     padding: 0 1em 1em;
