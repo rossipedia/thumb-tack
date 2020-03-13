@@ -1,3 +1,13 @@
 {
-    "plugins": ["styled-components"]
+  "presets": [
+    [
+      "@babel/preset-modules",
+      {
+        "loose": true
+      }
+    ]
+  ],
+  "plugins": [
+    "styled-components"
+  ]
 }
