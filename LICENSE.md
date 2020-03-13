@@ -1,5 +1,4 @@
-The MIT License (MIT)
-=====================
+# The MIT License (MIT)
 
 Copyright © 2018 [Bryan Ross](mailto:git@rossipedia.com)
 

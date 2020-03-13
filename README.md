@@ -58,6 +58,5 @@ The extension output will be in `./dist`
 Running `yarn dev` or `npm run dev` will start up webpack in "watch" mode.
 Changes to files in `./src` will be automatically re-compiled and bundled.
 
-
 [1]: https://chrome.google.com/webstore/detail/url-pinner/lchefjdnocignejmkklgakfmnjhiimjh?utm_source=chrome-ntp-icon
 [2]: https://chrome.google.com/webstore/detail/plkdbophokgibnhgphiamdpgamdcpcfc
